@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Antenatal Care Quiz</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f4f6f8;margin:0;color:#222}
+.container{max-width:900px;margin:0 auto;padding:24px}
+.header{background:#8b0000;color:#fff;padding:24px;border-radius:12px;margin-bottom:18px}
+.header h1{margin:0 0 8px}.timer{font-size:22px;font-weight:bold}
+.card{background:#fff;border-radius:12px;padding:22px;margin:16px 0;box-shadow:0 2px 8px #0001}
+.option{display:block;padding:12px;margin:8px 0;border:1px solid #ddd;border-radius:8px;cursor:pointer}
+.option:hover{background:#f7f7f7}
+button{background:#8b0000;color:#fff;border:0;border-radius:8px;padding:13px 20px;font-size:16px;cursor:pointer}
+button:disabled{background:#999}
+.progress{margin:10px 0;color:#555}
+#result{display:none}.score{font-size:30px;font-weight:bold}
+.notice{background:#fff3cd;padding:12px;border-radius:8px;margin:12px 0}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>Antenatal Care (ANC) Quiz</h1>
+<p>20-item quiz • 30-minute time limit • One attempt • No backtracking</p>
+<div class="timer">Time remaining: <span id="timer">30:00</span></div>
+</div>
+<div id="start" class="card">
+<h2>Instructions</h2>
+<div class="notice"><strong>Important:</strong> Use your own device/browser. The quiz records one attempt per browser on this device. Enter your name to begin. Once you start, you cannot return to previous questions. The quiz automatically submits when the timer reaches zero.</div>
+<input id="studentName" type="text" placeholder="Enter your full name" style="width:100%;padding:12px;box-sizing:border-box;border:1px solid #ccc;border-radius:8px"><br><br><input id="studentSection" type="text" placeholder="Enter your section" style="width:100%;padding:12px;box-sizing:border-box;border:1px solid #ccc;border-radius:8px">
+<br><br><button onclick="startQuiz()">Start Quiz</button>
+</div>
+<div id="quiz" style="display:none">
+<div class="progress" id="progress"></div>
+<div id="questionArea"></div>
+<button id="nextBtn" onclick="nextQuestion()">Next</button>
+</div>
+<div id="result" class="card">
+<h2>Quiz Submitted</h2>
+<p id="resultName"></p>
+<p class="score" id="score"></p>
+<p id="percent"></p>
+<p id="message"></p>
+</div>
+</div>
+<script>
+const questions = [
+["Understanding Antenatal Care","A pregnant woman visits the health center for regular pregnancy care. The nurse explains that ANC is intended to promote the best possible health of both the mother and baby. Which best describes antenatal care?",["Care provided only during labor","Care provided only when complications occur","Care provided by skilled health professionals to pregnant women to ensure the best health conditions for mother and baby","Care provided only after delivery"],2],
+["Components of ANC","During her first ANC contact, a pregnant woman asks the nurse what services are included in antenatal care. Which response is most appropriate?",["Only laboratory testing","Only treatment of pregnancy complications","Only health education","Risk identification, prevention and management of diseases, health education, and health promotion"],3],
+["Main Goal of the WHO ANC Model","A nurse is explaining the WHO ANC model to a group of pregnant women. What is one of its major goals?",["To decrease the number of prenatal contacts","To encourage women to give birth at home","To reduce stillbirths and pregnancy complications while promoting a positive pregnancy experience","To eliminate all laboratory examinations"],2],
+["Positive Pregnancy Experience","A pregnant client says, “I want my pregnancy care to be more than just checking whether my baby is healthy.” Which response best reflects the WHO approach?",["ANC should focus only on fetal assessment.","ANC should focus only on preventing maternal complications.","ANC should support a healthy pregnancy, positive childbirth experience, and positive experience of motherhood.","ANC is unnecessary if the pregnancy is low risk."],2],
+["Number of ANC Contacts","A pregnant woman asks how many minimum ANC contacts are recommended in the WHO model discussed in the presentation. What should the nurse tell her?",["Four contacts","Five contacts","Six contacts","Eight contacts"],3],
+["First ANC Contact","A woman is currently 10 weeks pregnant and wants to begin ANC. According to the schedule presented, when should her first ANC contact occur?",["At 20 weeks","At 26 weeks","During the first trimester, up to 12 weeks","At 30 weeks"],2],
+["Second-Trimester Contacts","A pregnant woman is planning her ANC schedule. Which pair represents the recommended second-trimester contacts in the presentation?",["12 and 16 weeks","20 and 26 weeks","24 and 30 weeks","28 and 32 weeks"],1],
+["Third-Trimester Contacts","A client asks when her third-trimester ANC contacts will occur. Which schedule is correct according to the slide?",["28, 30, 32, 34, and 36 weeks","30, 32, 34, 36, and 38 weeks","30, 34, 36, 38, and 40 weeks","32, 34, 36, 38, and 42 weeks"],2],
+["Why Eight Contacts?","A student nurse asks why the WHO model increased the number of ANC contacts. Which explanation is most appropriate?",["More contacts are required only for high-risk pregnancies.","More contacts make pregnancy more expensive.","More contacts provide opportunities for appropriate interventions at the best time and may improve maternal and perinatal outcomes.","More contacts eliminate the need for health education."],2],
+["FANC Model","A nurse is comparing the older focused antenatal care (FANC) model with the WHO eight-contact model. Which statement about FANC is correct?",["It recommended eight minimum contacts.","It was based on four ANC visits.","It recommended five visits during the third trimester.","It is the newer model presented in the slides."],1],
+["FANC Schedule","A woman following the older FANC model is scheduled for her second ANC visit. At approximately what gestational age would this occur?",["12 weeks","20 weeks","26 weeks","36 weeks"],2],
+["Importance of Third-Trimester Contacts","A pregnant woman asks why several ANC contacts are scheduled during the third trimester. Which is the best explanation?",["The third trimester has the lowest risk.","The contacts are mainly for collecting payment.","The third trimester represents a period of greater antenatal risk, requiring systematic monitoring of maternal and fetal well-being.","The contacts are only for preparing hospital documents."],2],
+["Meaning of “Contact”","A student asks why WHO uses the term “contact” instead of simply “visit.” What is the best answer?",["Contact means a telephone call only.","Contact means the pregnant woman does not need to see a healthcare provider.","Contact emphasizes an active connection between the pregnant woman and the healthcare provider.","Contact means care is provided only during emergencies."],2],
+["Person-Centered Care","A pregnant client tells the nurse that she feels ignored during every ANC visit. Which nursing action best reflects the overarching aim of the WHO ANC model?",["Focus only on laboratory results.","Complete the assessment as quickly as possible.","Provide respectful, individualized, person-centered care with appropriate information and psychosocial support.","Ask the client to return only if she develops complications."],2],
+["Antenatal Corticosteroids","A pregnant woman is at risk of giving birth prematurely. The healthcare team considers antenatal corticosteroids. What is the primary purpose of these medications?",["To increase maternal blood pressure","To prevent all pregnancy complications","To accelerate fetal lung maturation and reduce respiratory distress and neonatal mortality","To induce labor immediately"],2],
+["Candidate for Corticosteroids","A woman is 30 weeks pregnant and is considered at risk for imminent preterm birth. There is no evidence of maternal infection, and appropriate newborn care is available. What intervention may be appropriate?",["Avoid all medications until 40 weeks.","Give antibiotics to all pregnant women.","Provide antenatal corticosteroid therapy when the required conditions are met.","Give corticosteroids only after delivery."],2],
+["Betamethasone Dosage","A pregnant woman meets the criteria for antenatal corticosteroid therapy. The physician orders betamethasone according to the presentation. Which regimen is correct?",["6 mg IM once","12 mg IM every 12 hours for four doses","12 mg IM, two doses given 24 hours apart","24 mg IM once daily for two days"],2],
+["Dexamethasone Dosage","A pregnant woman requires antenatal corticosteroids, and dexamethasone is selected. Which regimen is presented in the slides?",["12 mg IM once","6 mg IM, four doses given 12 hours apart","6 mg IM once every 24 hours","24 mg IM every 6 hours"],1],
+["Benefits of Antenatal Corticosteroids","A nurse explains the benefits of antenatal corticosteroids to a pregnant woman at risk for preterm birth. Which outcome should the nurse include?",["Increased neonatal respiratory distress","Increased neonatal mortality","Reduced neonatal death and respiratory distress syndrome","Immediate prevention of premature birth"],2],
+["Corticosteroids After 34 Weeks","A pregnant woman is 35 weeks pregnant and asks whether antenatal corticosteroids are routinely recommended for fetal lung maturation according to the presented material. What should the nurse say?",["Yes, corticosteroids are always recommended after 34 weeks.","Yes, but only double the dose.","No. After 34 completed weeks, corticosteroids are not recommended for fetal lung maturation according to the presentation.","Yes, corticosteroids should be given every week until delivery."],2]
+];
+let current=0, answers=[], endTime, timerInterval, started=false;
+function startQuiz(){
+const name=document.getElementById("studentName").value.trim();
+const section=document.getElementById("studentSection").value.trim();
+if(!name){alert("Please enter your full name.");return;}
+if(!section){alert("Please enter your section.");return;}
+if(localStorage.getItem("ancQuizSubmitted")){alert("This browser has already submitted an attempt.");return;}
+started=true; current=0; answers=[];
+endTime=Date.now()+30*60*1000;
+document.getElementById("start").style.display="none";
+document.getElementById("quiz").style.display="block";
+renderQuestion();
+timerInterval=setInterval(updateTimer,1000);
+updateTimer();
+}
+function updateTimer(){
+const remaining=Math.max(0,endTime-Date.now());
+const sec=Math.ceil(remaining/1000);
+document.getElementById("timer").textContent=String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0");
+if(remaining<=0){clearInterval(timerInterval);submitQuiz(true);}
+}
+function renderQuestion(){
+const q=questions[current];
+document.getElementById("progress").textContent=`Question ${current+1} of ${questions.length}`;
+let s=`<div class="card"><h2>${current+1}. ${q[0]}</h2><p>${q[1]}</p>`;
+q[2].forEach((opt,i)=>{const checked=answers[current]===i?"checked":"";s+=`<label class="option"><input type="radio" name="answer" value="${i}" ${checked}> ${String.fromCharCode(65+i)}. ${opt}</label>`;});
+s+="</div>";
+document.getElementById("questionArea").innerHTML=s;
+document.getElementById("nextBtn").textContent=current===questions.length-1?"Submit Quiz":"Next";
+}
+function nextQuestion(){
+const selected=document.querySelector('input[name="answer"]:checked');
+if(!selected){alert("Please select an answer before continuing.");return;}
+answers[current]=Number(selected.value);
+if(current<questions.length-1){current++;renderQuestion();}else submitQuiz(false);
+}
+function submitQuiz(auto){
+if(!started)return;
+const selected=document.querySelector('input[name="answer"]:checked');
+if(selected)answers[current]=Number(selected.value);
+clearInterval(timerInterval);
+let score=0;
+questions.forEach((q,i)=>{if(answers[i]===q[4])score++;});
+const pct=Math.round(score/questions.length*100);
+localStorage.setItem("ancQuizSubmitted","true");
+localStorage.setItem("ancQuizResult",JSON.stringify({name:document.getElementById("studentName").value,section:document.getElementById("studentSection").value,score,pct,date:new Date().toISOString()}));
+document.getElementById("quiz").style.display="none";
+document.getElementById("result").style.display="block";
+document.getElementById("resultName").textContent="Student: "+document.getElementById("studentName").value+" | Section: "+document.getElementById("studentSection").value;
+document.getElementById("score").textContent=`Score: ${score} / ${questions.length}`;
+document.getElementById("percent").textContent=`Percentage: ${pct}%`;
+document.getElementById("message").textContent=auto?"The 30-minute time limit was reached and the quiz was submitted automatically.":"Your quiz has been submitted successfully.";
+}
+</script>
+</body>
+</html>
