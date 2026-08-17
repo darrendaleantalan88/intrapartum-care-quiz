@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intrapartum Care Practices Quiz</title>
+<style>
+body{font-family:Arial,sans-serif;background:#f4f6f8;margin:0;color:#222}
+.container{max-width:900px;margin:0 auto;padding:24px}
+.header{background:#8b0000;color:#fff;padding:24px;border-radius:12px;margin-bottom:18px}
+.header h1{margin:0 0 8px;font-size:28px}.header p{margin:5px 0 14px}
+.timer{font-size:22px;font-weight:bold}
+.card{background:#fff;border-radius:12px;padding:22px;margin:16px 0;box-shadow:0 2px 8px #0001}
+.option{display:block;padding:12px;margin:8px 0;border:1px solid #ddd;border-radius:8px;cursor:pointer;line-height:1.45}
+.option:hover{background:#f7f7f7}
+input[type=text],input[type=email]{width:100%;padding:12px;box-sizing:border-box;border:1px solid #ccc;border-radius:8px;font-size:16px}
+button{background:#8b0000;color:#fff;border:0;border-radius:8px;padding:13px 20px;font-size:16px;cursor:pointer}
+button:hover{background:#6d0000}button:disabled{background:#999}
+.progress{margin:10px 0;color:#555;font-weight:bold}
+.notice{background:#fff3cd;padding:12px;border-radius:8px;margin:12px 0;line-height:1.5}
+.field-label{display:block;font-weight:bold;margin:12px 0 6px}
+#result{display:none}.score{font-size:30px;font-weight:bold}
+.small{font-size:13px;color:#666}.danger{color:#8b0000}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>INTRAPARTUM CARE PRACTICES</h1>
+<p>20-item situational multiple-choice quiz • 20 points • 30-minute time limit • One attempt • No backtracking</p>
+<div class="timer">Time remaining: <span id="timer">30:00</span></div>
+</div>
+<div id="start" class="card">
+<h2>Quiz Instructions</h2>
+<div class="notice"><strong>Instructions:</strong> Read each situation carefully. Select the <strong>best answer</strong>. Each question is worth <strong>1 point</strong>. Total = <strong>20 points</strong>.<br><strong>Important:</strong> Enter your name and email before starting. Once you start, you cannot return to previous questions. The quiz will automatically submit when the timer reaches zero. This standalone file records one attempt per browser/device.</div>
+<label class="field-label" for="studentName">Full Name</label>
+<input id="studentName" type="text" placeholder="Enter your full name" autocomplete="name">
+<label class="field-label" for="studentEmail">Email Address</label>
+<input id="studentEmail" type="email" placeholder="Enter your email address" autocomplete="email">
+<p class="small">Please use your school/official email address if required by your instructor.</p><br>
+<button onclick="startQuiz()">Start Quiz</button>
+</div>
+<div id="quiz" style="display:none"><div class="progress" id="progress"></div><div id="questionArea"></div><button id="nextBtn" onclick="nextQuestion()">Next</button></div>
+<div id="result" class="card"><h2>Quiz Submitted</h2><p id="resultName"></p><p id="resultEmail"></p><p class="score" id="score"></p><p id="percent"></p><p id="message"></p></div>
+</div>
+<script>
+const questions = [
+["Companionship During Labor","A low-risk woman in active labor asks if her husband can stay with her throughout labor and childbirth. The husband is willing to provide emotional support. What is the nurse's BEST response?",["Only hospital staff are allowed to stay during active labor.","Your chosen companion may provide continuous support during labor and childbirth.","Your husband can only enter after the baby is born.","A companion is permitted only when the woman receives an epidural."],1],
+["Benefits of Labor Companionship","A woman becomes fearful and distressed during contractions. Her chosen companion continuously reassures and supports her. Which expected benefit of continuous labor support is most consistent with the presentation?",["Increased need for cesarean birth","Increased use of intrapartum analgesia","Less fear and distress during labor","Increased duration of labor"],2],
+["Privacy During Labor","A maternity unit has several beds in one room. A woman requests that her sister remain with her as her labor companion. What should the nurse prioritize when allowing companionship?",["Removing all curtains to allow staff observation","Maintaining privacy and confidentiality using dividers or curtains","Asking the companion to remain outside the room","Allowing only one companion after delivery"],1],
+["Perineal Shaving","A woman is admitted in labor and the nurse prepares to shave her pubic hair routinely before vaginal birth. The woman asks why this is necessary. What is the BEST response?",["It is routinely required for every vaginal birth.","It prevents all postpartum infections.","Routine perineal or pubic shaving before vaginal birth is not recommended.","It guarantees a shorter labor."],2],
+["Respecting the Woman's Choice","A woman states that she does not want her perineal hair shaved before childbirth. What should the nurse do?",["Shave her because it is standard obstetric practice","Ask another nurse to convince her","Respect her decision and autonomy","Explain that shaving is mandatory before vaginal birth"],2],
+["Vaginal Examination","A low-risk woman is in the active first stage of labor. The nurse notes that a digital vaginal examination was performed one hour ago and another nurse wants to repeat it immediately without a specific clinical indication. What is the most appropriate action?",["Repeat the examination every hour","Perform the examination every 30 minutes","Follow the recommended routine interval of about 4 hours","Perform an examination after every contraction"],2],
+["Reducing Unnecessary Examinations","A student nurse asks why frequent vaginal examinations should be avoided during prolonged labor. Which explanation is most appropriate?",["They always stop cervical dilation.","Multiple examinations may contribute to infectious morbidity.","They always cause cesarean birth.","They prevent spontaneous vaginal birth."],1],
+["Identifying the Stage of Labor","A woman is experiencing strong contractions and her cervix has dilated from 7 cm to 10 cm. She is experiencing intense contractions every 2–3 minutes lasting 60–90 seconds. Which phase is she experiencing?",["Early labor","Active labor","Transition to the second stage","Third stage of labor"],2],
+["Second Stage of Labor","A woman's cervix is completely dilated and she reports intense pressure and an urge similar to having a bowel movement. Which stage of labor is she experiencing?",["First stage","Second stage","Third stage","Fourth stage"],1],
+["Enema on Admission","A nurse is asked to administer an enema routinely to every woman admitted in labor. Which action is most consistent with the evidence presented?",["Administer the enema to shorten labor.","Administer the enema to prevent infant respiratory infection.","Discourage routine enema use because it has no demonstrated clinical benefit and may cause discomfort.","Administer the enema to prevent all perineal infections."],2],
+["Oral Intake During Labor","A healthy, low-risk woman in labor asks for clear fluids and light food. There is no clinical reason for restricting oral intake. Based on the presentation, what is the most appropriate response?",["You must remain NPO throughout labor.","Oral fluid and food intake may be allowed for low-risk women during labor.","Only IV fluids should be given.","Eating always causes Mendelson's syndrome."],1],
+["Understanding NPO","A student nurse asks why the “Nothing by Mouth” policy became common during labor. Which explanation is correct?",["It originated because oral fluids always prolong labor.","It originated from concerns about aspiration during general anesthesia.","It was introduced to prevent perineal trauma.","It was introduced to increase maternal mobility."],1],
+["Routine IV Fluids","A low-risk woman in spontaneous labor is drinking adequately and has no medical indication for IV therapy. A nurse suggests starting routine IV fluids solely to shorten labor. What should the nurse recognize?",["Routine IV fluids are recommended for every laboring woman.","IV fluids should always replace oral fluids.","IV fluids solely to shorten labor are not recommended.","IV fluids guarantee spontaneous vaginal birth."],2],
+["Risk of Excessive IV Fluids","A woman receives large amounts of IV fluid during labor. The nurse understands that excessive IV fluid administration may increase the risk of:",["Fluid volume overload","Cervical dilation","Maternal mobility","Spontaneous pushing"],0],
+["Maternal Mobility","A low-risk woman in the first stage of labor wants to stand, walk, and change positions rather than remain in bed. What should the nurse do?",["Encourage and support her mobility and upright position.","Require her to remain supine.","Prevent her from changing position.","Place her immediately in lithotomy position."],0],
+["Upright Position","A laboring woman asks why an upright position may be beneficial during labor. Which explanation is most appropriate?",["Gravity may help the baby descend.","It prevents all complications of labor.","It eliminates the need for monitoring.","It guarantees that cesarean birth will not be required."],0],
+["Method of Pushing","A woman reaches the second stage of labor and wants to follow her body's natural urge to push. What should the nurse do according to the recommendation in the presentation?",["Force her to hold her breath for 10 seconds.","Encourage her to follow her own urge and comfort when pushing.","Prevent her from pushing until the placenta separates.","Require four to five directed pushes during every contraction."],1],
+["Delayed Pushing With Epidural","A woman with an epidural is fully dilated. The nurse explains the evidence regarding delayed versus immediate pushing. Which statement is most accurate based on the presentation?",["Delayed pushing always produces better neonatal outcomes.","Delayed pushing shortens the entire second stage.","Delayed pushing may lengthen the second stage while reducing the duration of active pushing.","Immediate pushing is always harmful."],2],
+["Fundal Pressure","During the second stage of labor, a staff member suggests applying strong manual pressure to the woman's fundus to help deliver the baby. What should the nurse recognize?",["Fundal pressure is recommended routinely by WHO.","Fundal pressure is the preferred alternative to operative birth.","Manual fundal pressure to facilitate childbirth is not recommended by WHO.","Fundal pressure should be applied with maximum force."],2],
+["Preventing Perineal Trauma","A woman in the second stage of labor wants to know what measures may help reduce perineal trauma. Which intervention is consistent with the presentation?",["Routine pubic shaving","Routine enema","Perineal massage or warm perineal compresses, according to her preference and available options","Strong fundal pressure"],2]
+];
+let current=0,answers=[],endTime,timerInterval,started=false;
+function startQuiz(){const name=document.getElementById("studentName").value.trim();const email=document.getElementById("studentEmail").value.trim();if(!name){alert("Please enter your full name.");return;}if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert("Please enter a valid email address.");return;}if(localStorage.getItem("intrapartumQuizSubmitted")){alert("This browser has already submitted an attempt for this quiz.");return;}started=true;current=0;answers=[];endTime=Date.now()+30*60*1000;document.getElementById("start").style.display="none";document.getElementById("quiz").style.display="block";renderQuestion();timerInterval=setInterval(updateTimer,1000);updateTimer();}
+function updateTimer(){const remaining=Math.max(0,endTime-Date.now());const sec=Math.ceil(remaining/1000);document.getElementById("timer").textContent=String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0");if(remaining<=0){clearInterval(timerInterval);submitQuiz(true);}}
+function renderQuestion(){const q=questions[current];document.getElementById("progress").textContent=`Question ${current+1} of ${questions.length}`;let s=`<div class="card"><h2>${current+1}. ${q[0]}</h2><p>${q[1]}</p>`;q[2].forEach((opt,i)=>{const checked=answers[current]===i?"checked":"";s+=`<label class="option"><input type="radio" name="answer" value="${i}" ${checked}> ${String.fromCharCode(65+i)}. ${opt}</label>`;});s+="</div>";document.getElementById("questionArea").innerHTML=s;document.getElementById("nextBtn").textContent=current===questions.length-1?"Submit Quiz":"Next";}
+function nextQuestion(){const selected=document.querySelector('input[name="answer"]:checked');if(!selected){alert("Please select an answer before continuing.");return;}answers[current]=Number(selected.value);if(current<questions.length-1){current++;renderQuestion();}else submitQuiz(false);}
+function submitQuiz(auto){if(!started)return;const selected=document.querySelector('input[name="answer"]:checked');if(selected)answers[current]=Number(selected.value);clearInterval(timerInterval);let score=0;questions.forEach((q,i)=>{if(answers[i]===q[3])score++;});const pct=Math.round(score/questions.length*100);localStorage.setItem("intrapartumQuizSubmitted","true");localStorage.setItem("intrapartumQuizResult",JSON.stringify({name:document.getElementById("studentName").value,email:document.getElementById("studentEmail").value,score,pct,date:new Date().toISOString()}));document.getElementById("quiz").style.display="none";document.getElementById("result").style.display="block";document.getElementById("resultName").textContent="Student: "+document.getElementById("studentName").value;document.getElementById("resultEmail").textContent="Email: "+document.getElementById("studentEmail").value;document.getElementById("score").textContent=`Score: ${score} / ${questions.length}`;document.getElementById("percent").textContent=`Percentage: ${pct}%`;document.getElementById("message").textContent=auto?"The 30-minute time limit was reached and the quiz was submitted automatically.":"Your quiz has been submitted successfully.";window.scrollTo({top:0,behavior:"smooth"});}
+</script>
+</body>
+</html>
